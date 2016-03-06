@@ -1,0 +1,58 @@
+version: '2'
+# MySQL https://hub.docker.com/_/mysql/
+# Elastic Search https://hub.docker.com/_/elasticsearch/
+# MongoDB https://hub.docker.com/_/mongo/
+# Tesseract https://hub.docker.com/r/vimagick/tesseract/
+# RabbitMQ https://hub.docker.com/_/rabbitmq/
+# Activiti https://hub.docker.com/r/eternnoir/activiti/
+# Drools https://hub.docker.com/r/jboss/drools-workbench-showcase/
+################################################################################3
+# SQL
+# CREATE USER 'activiti'@'%.%.%.%' IDENTIFIED BY 'nukeman';
+# CREATE DATABASE IF NOT EXISTS `activiti` DEFAULT CHARACTER SET `utf8` COLLATE `utf8_unicode_ci`;
+# GRANT ALL PRIVILEGES ON `activiti`.* TO 'activiti'@'%.%.%.%';
+services:
+  rdbms:
+    image: mysql:5.7.11
+    ports:
+     - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "nukeman"
+  search:
+    image: elasticsearch:2.2.0
+    ports:
+    - "9200:9200"
+    - "9300:9300"
+  document:
+    image: mongo:3.2.3
+    ports:
+     - "27017:27017"
+  ocr:
+    image: vimagick/tesseract:latest
+  messagebus:
+    image: rabbitmq:3.6.1-management
+    ports:
+     - "15672:15672"
+     - "5672:5672"
+     - "8181:8080"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: nukeman
+#  activiti:
+#    image: eternnoir/activiti:5.17.0
+#    links:
+#       - rdbms
+#    environment:
+#      TOMCAT_ADMIN_USER: admin
+#      TOMCAT_ADMIN_PASSWORD: nukeman
+#      DB_HOST: rdbms
+#      DB_PORT: 3306
+#      DB_NAME: activiti
+#      DB_USER: activiti
+#      DB_PASS: nukeman
+#    ports:
+#     - "8282:8080"
+  jbpm:
+    image: jboss/jbpm-workbench
+    ports:
+     - "8282:8080"
